@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import NeuralOrb from './components/NeuralOrb.jsx';
-import Orb3D from './components/Orb3D.jsx';
+import React, { Suspense, useState, useRef, useEffect, lazy } from 'react';
 import './index.css';
+import LoadingSpinner from './LoadingSpinner.jsx';
+
+const LazyNeuralOrb = lazy(() => import('./components/NeuralOrb.jsx'));
+const LazyOrb3D = lazy(() => import('./components/Orb3D.jsx'));
 
 // API Configuration from environment variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -353,11 +355,13 @@ function App() {
           <div className="orb-wrapper w-full h-full flex flex-col items-center justify-center">
             
             {/* The Animated Orb — Switch between NeuralOrb (CSS) and Orb3D (THREE.js) */}
-            {useOrb3D ? (
-              <Orb3D audioLevel={volume} orbState={orbState} />
-            ) : (
-              <NeuralOrb audioLevel={volume} orbState={orbState} />
-            )}
+            <Suspense fallback={<LoadingSpinner message={`Cargando Orbe ${useOrb3D ? '3D' : 'Neural'}...`} />}>
+              {useOrb3D ? (
+                <LazyOrb3D audioLevel={volume} orbState={orbState} />
+              ) : (
+                <LazyNeuralOrb audioLevel={volume} orbState={orbState} />
+              )}
+            </Suspense>
             
             <div className="text-center mt-8">
               <div 

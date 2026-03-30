@@ -1,0 +1,492 @@
+/* ============================================================
+   MSB Restaurant Voice Assistant — Premium Design System
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700 &family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');:root {
+    /* Core palette */
+    --bg-deep: #06060a;
+    --bg-surface: #0d0d14;
+    --bg-elevated: #13131f;
+    --accent-violet: #7c3aed;
+    --accent-violet-soft: #a78bfa;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-gold: #d4a853;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.06);
+    --text-primary: #f1f5f9;
+    --text-muted: #64748b;
+    --text-dim: #475569;
+    --glow-violet: rgba(124, 58, 237, 0.4);
+    --glow-blue: rgba(59, 130, 246, 0.3);
+    --glow-emerald: rgba(16, 185, 129, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    background: var(--bg-deep);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+/* Cosmic background gradient */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at 20% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(59, 130, 246, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes orbPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 60px rgba(124, 58, 237, 0.3), 0 0 120px rgba(59, 130, 246, 0.15), inset 0 0 60px rgba(124, 58, 237, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 80px rgba(124, 58, 237, 0.5), 0 0 160px rgba(59, 130, 246, 0.25), inset 0 0 80px rgba(124, 58, 237, 0.15);
+    }
+}
+
+@keyframes orbBreathe {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+@keyframes ringRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ringPulse {
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes buttonGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 60px rgba(59, 130, 246, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(124, 58, 237, 0.5), 0 0 80px rgba(59, 130, 246, 0.25);
+    }
+}
+
+@keyframes statusDot {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+@keyframes waveform {
+    0%,
+    100% {
+        height: 8px;
+    }
+    25% {
+        height: 32px;
+    }
+    50% {
+        height: 16px;
+    }
+    75% {
+        height: 40px;
+    }
+}
+
+@keyframes thinkingPulse {
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+/* ============================================================
+   Utility Classes
+   ============================================================ */
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--accent-gold) 0%, #e8c97a 50%, var(--accent-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-cool {
+    background: linear-gradient(135deg, var(--accent-violet-soft) 0%, var(--accent-blue) 50%, var(--accent-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================================
+   Voice Visualizer Orb
+   ============================================================ */
+
+.orb-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orb {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(124, 58, 237, 0.4) 0%, rgba(59, 130, 246, 0.3) 40%, rgba(6, 6, 10, 0.8) 70%);
+    animation: orbPulse 3s ease-in-out infinite, orbBreathe 4s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.orb-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    z-index: 1;
+}
+
+.orb-ring-1 {
+    width: 190px;
+    height: 190px;
+    top: 15px;
+    left: 15px;
+    border-color: rgba(124, 58, 237, 0.2);
+    animation: ringPulse 3s ease-in-out infinite;
+}
+
+.orb-ring-2 {
+    width: 220px;
+    height: 220px;
+    top: 0;
+    left: 0;
+    border-color: rgba(59, 130, 246, 0.1);
+    animation: ringPulse 4s ease-in-out infinite 0.5s;
+}
+
+/* State-specific orb styles */
+.orb-listening .orb {
+    background: radial-gradient(circle at 35% 35%, rgba(16, 185, 129, 0.5) 0%, rgba(59, 130, 246, 0.3) 40%, rgba(6, 6, 10, 0.8) 70%);
+}
+
+.orb-speaking .orb {
+    animation: orbPulse 1.5s ease-in-out infinite, orbBreathe 2s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, rgba(124, 58, 237, 0.6) 0%, rgba(244, 63, 94, 0.3) 40%, rgba(6, 6, 10, 0.8) 70%);
+}
+
+.orb-thinking .orb {
+    animation: thinkingPulse 2s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, rgba(245, 158, 11, 0.5) 0%, rgba(124, 58, 237, 0.3) 40%, rgba(6, 6, 10, 0.8) 70%);
+}
+
+.orb-inactive .orb {
+    animation: orbBreathe 6s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, rgba(100, 116, 139, 0.3) 0%, rgba(71, 85, 105, 0.2) 40%, rgba(6, 6, 10, 0.8) 70%);
+    box-shadow: 0 0 40px rgba(100, 116, 139, 0.1);
+}
+
+/* ============================================================
+   Premium Button
+   ============================================================ */
+
+.btn-premium {
+    position: relative;
+    padding: 18px 48px;
+    border: none;
+    border-radius: 60px;
+    background: linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-blue) 100%);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: buttonGlow 3s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.btn-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.5), 0 0 80px rgba(59, 130, 246, 0.3);
+}
+
+.btn-premium:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-disconnect {
+    padding: 12px 32px;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    border-radius: 60px;
+    background: rgba(244, 63, 94, 0.1);
+    color: var(--accent-rose);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-disconnect:hover {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: rgba(244, 63, 94, 0.6);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+}
+
+/* ============================================================
+   Status Badge
+   ============================================================ */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.status-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: statusDot 2s ease-in-out infinite;
+}
+
+.status-listening {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--accent-emerald);
+}
+.status-listening .dot {
+    background: var(--accent-emerald);
+}
+
+.status-speaking {
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    color: var(--accent-violet-soft);
+}
+.status-speaking .dot {
+    background: var(--accent-violet);
+}
+
+.status-thinking {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--accent-amber);
+}
+.status-thinking .dot {
+    background: var(--accent-amber);
+}
+
+.status-initializing {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--accent-blue);
+}
+.status-initializing .dot {
+    background: var(--accent-blue);
+}
+
+.status-inactive {
+    background: rgba(100, 116, 139, 0.1);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+    color: var(--text-muted);
+}
+.status-inactive .dot {
+    background: var(--text-muted);
+}
+
+/* ============================================================
+   LiveKit Override
+   ============================================================ */
+
+.lk-voice-assistant-control-bar {
+    background: transparent !important;
+    border: none !important;
+}
+
+.lk-voice-assistant-control-bar button {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 50% !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s ease !important;
+}
+
+.lk-voice-assistant-control-bar button:hover {
+    background: var(--glass-hover) !important;
+    box-shadow: 0 0 20px var(--glow-violet) !important;
+}
+
+/* Hide default bar visualizer */
+.lk-bar-visualizer {
+    display: none !important;
+}
+
+/* ============================================================
+   SOTA Redesign Components (Transcript, Menu, Map)
+   ============================================================ */
+
+.glass-panel {
+    background: rgba(15, 15, 20, 0.4);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.transcript-panel {
+    position: absolute;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+    transition: right 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+}
+
+.transcript-panel.open {
+    right: 0;
+}
+
+.btn-toggle-transcript {
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-toggle-transcript:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-toggle-transcript.active {
+    background: rgba(124, 58, 237, 0.2);
+    border-color: rgba(124, 58, 237, 0.5);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+}
+
+/* Animations added for dynamic display */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

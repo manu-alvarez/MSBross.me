@@ -17,9 +17,12 @@
     "@mui/material": "^7.3.9",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@sentry/react": "^10.46.0",
+    "@sentry/tracing": "^7.120.4",
     "@types/three": "^0.183.1",
     "framer-motion": "^12.36.0",
     "lucide-react": "^0.577.0",
+    "mixpanel-browser": "^2.77.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.183.2"

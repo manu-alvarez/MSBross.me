@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKOLINA AI • MSB LUXURY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Outfit:wght@100;400;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --cyan: #00f2ff; --bg: #050508; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
+        .lux-font { font-family: 'Cinzel', serif; }
+        .glass-aurora { background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(40px); border: 1px solid rgba(212, 175, 55, 0.15); box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 100px rgba(212, 175, 55, 0.05); }
+        .orb-halo { position: relative; width: 220px; height: 220px; }
+        .orb-halo::before { content: ''; position: absolute; inset: -30px; border-radius: 50%; background: conic-gradient(from 0deg, var(--gold), transparent, var(--cyan), transparent, var(--gold)); opacity: 0.2; animation: rotate 10s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .orb { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, var(--cyan), #001eff); filter: blur(1px); box-shadow: 0 0 60px var(--cyan); animation: pulse 3s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1) brightness(1); filter: blur(2px); } 50% { transform: scale(1.08) brightness(1.2); filter: blur(10px); } }
+        .gold-sparkle { background: linear-gradient(90deg, #d4af37, #fef1b6, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="max-w-xl w-full p-12 glass-aurora rounded-[3rem] text-center space-y-12">
+        <div class="space-y-4">
+            <h1 class="lux-font text-5xl font-black tracking-[0.2em] gold-sparkle uppercase">Nikolina AI</h1>
+            <p class="text-[10px] uppercase tracking-[0.8em] text-slate-500">Premium Digital Hostess • msbross.me</p>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="orb-halo">
+                <div id="orb" class="orb"></div>
+            </div>
+        </div>
+
+        <div id="chat-status" class="text-xs font-light text-slate-400 italic h-6 tracking-widest">Protocolo de Escucha Activado...</div>
+
+        <button id="main-btn" onclick="toggleConversation()" 
+            class="group relative px-14 py-5 bg-transparent overflow-hidden">
+            <div class="absolute inset-0 border border-gold-border rounded-xl opacity-20 group-hover:opacity-100 transition-all"></div>
+            <span class="relative lux-font text-xs font-black uppercase tracking-[0.4em] text-[#d4af37]">Iniciar Protocolo</span>
+        </button>
+
+        <div class="flex items-center justify-center gap-6 pt-6 opacity-30">
+            <div class="h-px w-20 bg-gradient-to-r from-transparent to-[#d4af37]"></div>
+            <p class="text-[9px] uppercase tracking-widest lux-font">SOTA STANDALONE</p>
+            <div class="h-px w-20 bg-gradient-to-l from-transparent to-[#d4af37]"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = '/api.php';
+        let isActive = false; let recognition = null; let conversationHistory = [];
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false; recognition.interimResults = false; recognition.lang = 'es-ES';
+            recognition.onstart = () => { setStatus('AUDIENCIA ACTIVA'); };
+            recognition.onresult = (e) => { setStatus('PROCESANDO NEURAL...'); processWithLLM(e.results[0][0].transcript); };
+            recognition.onend = () => { if(isActive) recognition.start(); };
+        }
+
+        function setStatus(txt) { document.getElementById('chat-status').innerText = txt; }
+
+        async function toggleConversation() {
+            if (isActive) {
+                isActive = false; recognition.stop();
+                document.getElementById('main-btn').querySelector('span').innerText = 'Iniciar Protocolo';
+                setStatus('CANAL CERRADO');
+            } else {
+                isActive = true; recognition.start();
+                document.getElementById('main-btn').querySelector('span').innerText = 'Finalizar Protocolo';
+                speak("Hola, soy Nikolina, asistente virtual soberana de Restaurante MSB. ¿En qué puedo servirle?");
+                logCall("SESIÓN INICIADA");
+            }
+        }
+
+        async function logCall(evt) {
+            try { await fetch(API_ENDPOINT + '?action=log_call', { method: 'POST', body: JSON.stringify({ event: evt }) }); } catch(e){}
+        }
+
+        async function processWithLLM(text) {
+            conversationHistory.push({ role: 'user', content: text });
+            const prompt = `Eres Nikolina de Restaurante MSB (Madrid). Gestionas reservas de lujo.
+CARTA: Ensalada(9.5€), Croquetas(8€), Paella(16€), Solomillo(22€), Risotto(14.5€).
+REGLA: Para reservar pide Nombre, Día, Hora y Pax. AL CONFIRMAR: Di "Reserva confirmada" y añade: [JSON_RESERVA:{"nombre":"[N]","fecha":"[D]","hora":"[H]","pax":"[P]"}]`;
+
+            try {
+                const response = await fetch(API_ENDPOINT + '?action=chat', {
+                    method: 'POST',
+                    body: JSON.stringify({ messages: [{ role: 'system', content: prompt }, ...conversationHistory.slice(-8)], model: 'gemini-1.5-flash', provider: 'gemini' })
+                });
+                const data = await response.json();
+                let content = data.content || '';
+
+                if (content.includes('[JSON_RESERVA:')) {
+                    const match = content.match(/\[JSON_RESERVA:(.*?)\]/);
+                    if (match && match[1]) {
+                        await fetch(API_ENDPOINT + '?action=save_reservation', { method: 'POST', body: JSON.stringify({ reservation: JSON.parse(match[1]) }) });
+                        content = content.replace(match[0], '').trim();
+                    }
+                }
+                conversationHistory.push({ role: 'assistant', content: content });
+                speak(content);
+            } catch (e) { setStatus('FALLO DE ENLACE'); }
+        }
+
+        async function speak(text) {
+            setStatus('EMISIÓN DE RESPUESTA');
+            try {
+                const response = await fetch(API_ENDPOINT + '?action=tts', { method: 'POST', body: JSON.stringify({ text }) });
+                const data = await response.json();
+                const audio = new Audio("data:audio/mp3;base64," + data.audio);
+                audio.play();
+                audio.onended = () => { setStatus('AUDIENCIA ACTIVA'); };
+            } catch (e) { setStatus('FALLO TTS'); }
+        }
+    </script>
+</body>
+</html>

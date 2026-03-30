@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN • MSB LUXURY CONTROL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@100;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --bg: #050508; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #fff; }
+        .lux-font { font-family: 'Cinzel', serif; }
+        .glass-panel { background: rgba(5, 5, 8, 0.7); backdrop-filter: blur(50px); border: 1px solid rgba(212, 175, 55, 0.1); box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+        .gold-border { border-color: var(--gold); }
+        .gold-sparkle { background: linear-gradient(90deg, #d4af37, #fef1b6, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .lux-tr { border-bottom: 1px solid rgba(212, 175, 55, 0.05); transition: all 0.3s; }
+        .lux-tr:hover { background: rgba(212, 175, 55, 0.03); }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="login-overlay" class="fixed inset-0 z-[100] bg-black/98 backdrop-blur-2xl flex items-center justify-center p-6 text-center">
+        <div class="max-w-md w-full glass-panel p-16 rounded-[3rem] border-gold-border">
+            <h1 class="lux-font text-4xl font-black tracking-[0.3em] gold-sparkle mb-4 uppercase">MSB CONTROL</h1>
+            <p class="text-[9px] text-slate-500 uppercase tracking-[0.6em] mb-12">Restricted Access • Protocol Nikolina Gold</p>
+            <div class="space-y-6">
+                <input id="user" type="text" placeholder="ID Operador" class="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 outline-none focus:border-[#d4af37] text-white">
+                <input id="pass" type="password" placeholder="Clave de Acceso" class="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 outline-none focus:border-[#d4af37] text-white">
+                <button onclick="attemptLogin()" class="w-full bg-gradient-to-r from-[#d4af37] to-[#fef1b6] text-black font-black py-5 rounded-2xl mt-6 uppercase tracking-widest text-[10px] active:scale-95 transition-all">Acceso al Sistema</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden animate-fade-in">
+        <nav class="sticky top-0 z-50 glass-panel px-12 py-6 flex items-center justify-between border-b border-white/5">
+            <div class="flex items-center gap-10">
+                <h2 class="lux-font text-2xl font-black text-[#d4af37] tracking-[0.3em] uppercase">Admin MSB Luxury</h2>
+                <div class="h-6 w-px bg-white/10"></div>
+                <div class="flex gap-6">
+                   <span class="text-[9px] text-slate-500 uppercase tracking-widest flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div> Sistema Autónomo Certificado</span>
+                </div>
+            </div>
+            <button onclick="logout()" class="text-[9px] text-slate-500 hover:text-white uppercase tracking-widest transition-all">Cerrar Sesión</button>
+        </nav>
+
+        <main class="max-w-[1600px] mx-auto p-12 space-y-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="glass-panel p-10 rounded-[2.5rem] border-l-[4px] border-[#d4af37]">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2 font-black">Historial Reservas</p>
+                    <h3 id="stat-res" class="text-5xl font-black gold-sparkle uppercase">...</h3>
+                </div>
+                <div class="glass-panel p-10 rounded-[2.5rem]">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2 font-black">Llamadas AI Procesadas</p>
+                    <h3 id="stat-calls" class="text-5xl font-black uppercase">...</h3>
+                </div>
+                <div class="glass-panel p-10 rounded-[2.5rem]">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2 font-black">Efectividad Neural</p>
+                    <h3 class="text-5xl font-black text-emerald-400 font-mono tracking-tighter uppercase">100%</h3>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-[3rem] overflow-hidden">
+                <div class="px-12 py-8 border-b border-white/5 flex items-center justify-between bg-white/5">
+                    <h4 class="lux-font text-xs uppercase tracking-[0.4em] gold-sparkle">Registro de Actividad Real msbross.me</h4>
+                    <button onclick="fetchStats()" class="p-3 hover:bg-white/10 rounded-xl transition-all"><i data-lucide="refresh-cw" class="w-4 h-4 text-[#d4af37]"></i></button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-black/50 text-[10px] text-slate-500 uppercase tracking-[0.3em]">
+                            <tr>
+                                <th class="px-12 py-6">ID / Registro</th>
+                                <th class="px-12 py-6">Cliente Premium</th>
+                                <th class="px-12 py-6">Fecha / Horario</th>
+                                <th class="px-12 py-6">Comensales</th>
+                                <th class="px-12 py-6">Notas / Protocolo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="res-body" class="divide-y divide-white/5">
+                            <!-- Inyectado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'https://msbross.me/traductor/api.php?action=get_stats';
+        lucide.createIcons();
+
+        function attemptLogin() {
+            if (document.getElementById('user').value === 'admin' && document.getElementById('pass').value === 'nikolina2026') {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                localStorage.setItem('nikolina_auth', 'true');
+                fetchStats();
+            }
+        }
+
+        function logout() { localStorage.removeItem('nikolina_auth'); location.reload(); }
+
+        if (localStorage.getItem('nikolina_auth') === 'true') {
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            fetchStats();
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                document.getElementById('stat-res').innerText = data.reservations.length;
+                document.getElementById('stat-calls').innerText = data.calls_count;
+                
+                const body = document.getElementById('res-body');
+                body.innerHTML = '';
+                
+                if (data.reservations.length === 0) {
+                    body.innerHTML = '<tr><td colspan="5" class="px-12 py-20 text-center text-slate-600 italic uppercase text-[10px] tracking-widest">Sin registros históricos detectados.</td></tr>';
+                    return;
+                }
+
+                data.reservations.reverse().forEach(res => {
+                    body.innerHTML += `<tr class="lux-tr">
+                        <td class="px-12 py-8 font-mono text-[9px] text-slate-500 italic">#${res.id}</td>
+                        <td class="px-12 py-8 font-black uppercase text-[#d4af37] tracking-wider text-xs">${res.nombre} <span class="block text-[8px] font-light text-slate-500 mt-1">${res.phone}</span></td>
+                        <td class="px-12 py-8 font-bold text-slate-300 text-xs">${res.fecha} <span class="text-[#d4af37] mx-2">•</span> ${res.hora}</td>
+                        <td class="px-12 py-8"><span class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-[9px] uppercase font-black tracking-widest">${res.pax} PAX</span></td>
+                        <td class="px-12 py-8 text-[10px] text-slate-400 italic max-w-xs">${res.requests || 'Protocolo Estándar'}</td>
+                    </tr>`;
+                });
+            } catch (e) { console.error(e); }
+        }
+    </script>
+</body>
+</html>

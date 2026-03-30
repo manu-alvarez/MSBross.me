@@ -1,0 +1,12 @@
+# LiveKit SDK (for token generation)
+livekit-api
+
+# Server
+fastapi>=0.100.0
+uvicorn>=0.20.0
+httpx>=0.27.0
+PyJWT>=2.8.0
+python-multipart>=0.0.9
+
+# Utilities
+python-dotenv>=1.0.0

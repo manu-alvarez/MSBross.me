@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IAPUTA OS v8 • Neural Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Plus+Jakarta+Sans:wght@200;400;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #8b5cf6; --gold: #d4af37; --bg: #020105; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #fff; overflow: hidden; margin: 0; }
+        .lux-font { font-family: 'Cinzel', serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-obsidian { background: rgba(2, 1, 5, 0.8); backdrop-filter: blur(50px); border: 1px solid rgba(139, 92, 246, 0.15); box-shadow: 0 0 50px rgba(0,0,0,1); }
+        #orb-canvas { position: fixed; inset: 0; z-index: 0; filter: brightness(1.2) contrast(1.1); }
+        .hud-border { border-color: rgba(139, 92, 246, 0.2); }
+        .gold-glow { text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .purple-glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        
+        @keyframes scan { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+        .scanner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, var(--accent), transparent); opacity: 0.1; height: 100px; animation: scan 3s linear infinite; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-[#020105] scanner">
+    <canvas id="orb-canvas"></canvas>
+
+    <!-- Top HUD High-End -->
+    <div class="fixed top-8 left-8 right-8 flex justify-between items-start z-50">
+        <div class="glass-obsidian p-6 rounded-[2.5rem] flex items-center gap-8 purple-glow">
+            <a href="/" class="text-white/20 hover:text-[#8b5cf6] transition-all"><i data-lucide="chevron-left" class="w-5 h-5"></i></a>
+            <div>
+                <h1 class="lux-font text-2xl font-black tracking-[0.4em] text-white">IAPUTA OS <span class="text-[#8b5cf6]">v8.0</span></h1>
+                <p class="text-[9px] text-white/30 tracking-[0.6em] mono uppercase">Neural Cognitive Bridge • SOTA Gold</p>
+            </div>
+        </div>
+        
+        <div class="flex gap-6">
+            <div class="glass-obsidian px-8 py-5 rounded-[2.5rem] text-center">
+                <p class="text-[9px] text-white/30 uppercase tracking-[0.4em] mb-1">Métricas AI</p>
+                <div class="flex items-center gap-4">
+                    <span id="calls-stat" class="text-xl font-black text-[#8b5cf6] mono tracking-tighter">...</span>
+                    <div class="h-4 w-px bg-white/10"></div>
+                    <span id="clock" class="text-xs font-light text-white/60 mono tracking-widest uppercase">--:--:--</span>
+                </div>
+            </div>
+            <button onclick="clearMemory()" class="glass-obsidian p-5 rounded-full hover:bg-white/5 transition-all group border-red-500/20">
+                <i data-lucide="trash-2" class="w-5 h-5 text-red-500/40 group-hover:text-red-500"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Interface Latency Controls -->
+    <div class="fixed left-8 top-1/2 -translate-y-1/2 flex flex-col gap-6 z-50">
+        <div class="flex flex-col gap-4 p-2 glass-obsidian rounded-3xl">
+            <button onclick="captureWebcam()" class="p-4 rounded-2xl hover:bg-[#8b5cf6]/10 transition-all group" title="Cámara Vision">
+                <i data-lucide="camera" class="w-6 h-6 text-white/20 group-hover:text-[#8b5cf6]"></i>
+            </button>
+            <button onclick="captureScreenshot()" class="p-4 rounded-2xl hover:bg-[#8b5cf6]/10 transition-all group" title="Captura Vision">
+                <i data-lucide="monitor" class="w-6 h-6 text-white/20 group-hover:text-[#8b5cf6]"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Transcription HUD -->
+    <div class="fixed bottom-32 left-1/2 -translate-x-1/2 w-full max-w-4xl px-8 z-50">
+        <div id="transcript-panel" class="glass-obsidian p-10 rounded-[3rem] opacity-0 translate-y-10 transition-all duration-700 pointer-events-none">
+            <div class="flex items-start gap-8">
+                <div id="vision-preview" class="hidden w-32 h-32 rounded-3xl overflow-hidden border border-[#8b5cf6]/30 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
+                    <img id="preview-img" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 space-y-4">
+                    <div class="flex items-center gap-4">
+                        <span id="role-label" class="text-[10px] text-[#8b5cf6] font-black tracking-[0.5em] mono uppercase">SISTEMA NEURAL</span>
+                        <div class="h-px flex-1 bg-gradient-to-r from-[#8b5cf6]/30 to-transparent"></div>
+                    </div>
+                    <p id="transcript-text" class="text-lg font-light text-white/90 leading-relaxed tracking-wide"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Center -->
+    <div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-full max-w-2xl px-8 z-[100]">
+        <div class="flex items-center gap-6">
+            <div class="flex-1 glass-obsidian px-10 py-6 rounded-full flex items-center gap-6 border-white/5 purple-glow">
+                <input id="user-input" type="text" placeholder="Inyectar comando neural..." 
+                    class="bg-transparent border-none outline-none flex-1 text-sm text-white placeholder-white/20 font-light tracking-widest">
+                <button onclick="handleTextInput()" class="text-white/20 hover:text-[#8b5cf6] transition-all"><i data-lucide="send-horizontal" class="w-5 h-5"></i></button>
+            </div>
+            <button id="mic-btn" onclick="toggleMic()" 
+                class="w-24 h-24 bg-[#8b5cf6] rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(139,92,246,0.4)] hover:scale-105 active:scale-95 transition-all">
+                <i data-lucide="mic" class="w-10 h-10 text-white"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const API_URL = '/api.php';
+        let isActive = false; let recognition = null;
+        let orbState = 'ready'; let audioLevel = 0; let conversationHistory = [];
+
+        // Clock & Metrics
+        setInterval(() => { if(document.getElementById('clock')) document.getElementById('clock').innerText = new Date().toLocaleTimeString('es-ES'); }, 1000);
+
+        // --- ThreeJS Neural Orb v2 ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('orb-canvas'), alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const coreGeom = new THREE.SphereGeometry(1.5, 64, 64);
+        const coreMat = new THREE.ShaderMaterial({
+            uniforms: { time: { value: 0 }, orbColor: { value: new THREE.Color(0x8b5cf6) }, power: { value: 0 } },
+            vertexShader: `varying vec3 vNormal; void main() { vNormal = normal; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+            fragmentShader: `varying vec3 vNormal; uniform vec3 orbColor; uniform float time; uniform float power; void main() { float i = pow(0.7 - dot(vNormal, vec3(0,0,1)), 3.0); gl_FragColor = vec4(orbColor, i * (1.5 + power)); }`,
+            transparent: true, side: THREE.DoubleSide
+        });
+        const core = new THREE.Mesh(coreGeom, coreMat); scene.add(core);
+
+        const wireGeom = new THREE.IcosahedronGeometry(2.2, 2);
+        const wireMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.1 });
+        const wire = new THREE.Mesh(wireGeom, wireMat); scene.add(wire);
+
+        camera.position.z = 6;
+        function animate() {
+            requestAnimationFrame(animate); 
+            const t = performance.now() * 0.001; coreMat.uniforms.time.value = t;
+            coreMat.uniforms.power.value = audioLevel * 5.0;
+            wire.rotation.y += 0.005; wire.rotation.z += 0.003; core.rotation.y -= 0.002;
+            
+            if (orbState === 'listening') coreMat.uniforms.orbColor.value.set(0xef4444);
+            else if (orbState === 'speaking') coreMat.uniforms.orbColor.value.set(0x00f2ff);
+            else coreMat.uniforms.orbColor.value.set(0x8b5cf6);
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false; recognition.interimResults = false; recognition.lang = 'es-ES';
+            recognition.onstart = () => { setStatus('listening', 'Escuchando...'); };
+            recognition.onresult = (e) => { 
+                const txt = e.results[0][0].transcript;
+                setStatus('processing', txt, 'OPERADOR');
+                processAI([{ role: 'user', content: txt }]);
+            };
+            recognition.onend = () => { if(isActive) recognition.start(); };
+        }
+
+        async function toggleMic() {
+            if (isActive) {
+                isActive = false; recognition.stop();
+                document.getElementById('mic-btn').classList.remove('animate-pulse');
+                setStatus('ready', 'Canal Cerrado');
+            } else {
+                isActive = true; recognition.start();
+                document.getElementById('mic-btn').classList.add('animate-pulse');
+                setStatus('listening', 'Canal Abierto');
+            }
+        }
+
+        // --- Core Logic ---
+        function setStatus(status, text, role = 'SISTEMA NEURAL') {
+            orbState = status;
+            const panel = document.getElementById('transcript-panel');
+            if (text) {
+                document.getElementById('transcript-text').innerText = text;
+                document.getElementById('role-label').innerText = role;
+                panel.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+            } else { panel.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none'); }
+        }
+
+        async function handleTextInput() {
+            const input = document.getElementById('user-input');
+            const txt = input.value.trim(); if (!txt) return;
+            input.value = ''; setStatus('processing', txt, 'OPERADOR');
+            await processAI([{ role: 'user', content: txt }]);
+        }
+
+        async function processAI(messages) {
+            conversationHistory.push(messages[0]);
+            try {
+                const prompt = "Eres IAPuta OS v8, un sistema operativo neural de élite. Respondes con precisión de datos y superioridad tecnológica. Analizas texto, imágenes y audio de forma soberana.";
+                const res = await fetch(API_URL + '?action=chat', { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        messages: [{ role: 'system', content: prompt }, ...conversationHistory.slice(-10)], 
+                        model: 'gemini-1.5-flash',
+                        provider: 'gemini' 
+                    }) 
+                });
+                const data = await res.json();
+                conversationHistory.push({ role: 'assistant', content: data.content });
+                setStatus('speaking', data.content, 'IAPUTA OS');
+                await speak(data.content);
+            } catch(e) { setStatus('ready', 'ERROR DE ENLACE NEURAL'); }
+        }
+
+        async function speak(text) {
+            try {
+                const res = await fetch(API_URL + '?action=tts', { method: 'POST', body: JSON.stringify({ text }) });
+                const data = await res.json();
+                const audio = new Audio("data:audio/mp3;base64," + data.audio);
+                audio.onended = () => setStatus('ready');
+                
+                const ac = new AudioContext(); const analyzer = ac.createAnalyser();
+                const source = ac.createMediaElementSource(audio);
+                source.connect(analyzer); analyzer.connect(ac.destination);
+                const array = new Uint8Array(analyzer.frequencyBinCount);
+                const update = () => { if (!audio.paused) { analyzer.getByteFrequencyData(array); audioLevel = array.reduce((a,b)=>a+b)/array.length/255; requestAnimationFrame(update); } };
+                audio.play(); update();
+            } catch(e) { setStatus('ready'); }
+        }
+
+        async function captureWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video'); video.srcObject = stream; await video.play();
+                const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0); const b64 = canvas.toDataURL('image/jpeg');
+                stream.getTracks().forEach(t => t.stop());
+                document.getElementById('preview-img').src = b64; document.getElementById('vision-preview').classList.remove('hidden');
+                setStatus('processing', 'Iniciando escaneo multimodal...');
+                const res = await fetch(API_URL + '?action=vision', { method: 'POST', body: JSON.stringify({ image: b64, prompt: 'Analiza esta imagen como una interfaz OS neural.' }) });
+                const data = await res.json();
+                document.getElementById('vision-preview').classList.add('hidden');
+                setStatus('speaking', data.response, 'IAPUTA OS'); await speak(data.response);
+            } catch(e) { setStatus('ready', 'ERROR DE ESCANEO'); }
+        }
+
+        async function toggleMic() {
+            // Reutilizar lógica STT estándar...
+        }
+    </script>
+</body>
+</html>

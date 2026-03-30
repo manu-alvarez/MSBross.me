@@ -1,0 +1,15 @@
+# LiveKit Agents SDK
+livekit-agents
+livekit-plugins-google
+livekit-plugins-openai
+livekit-plugins-silero
+livekit-api
+
+# HTTP & Audio
+httpx>=0.27.0
+av>=12.0.0
+numpy>=1.26.0
+
+# Utilities
+python-dotenv>=1.0.0
+websockets>=12.0

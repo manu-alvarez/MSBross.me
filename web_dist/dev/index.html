@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV • Protocolo Nikolina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #10b981; --bg: #030305; }
+        body { font-family: 'JetBrains Mono', monospace; background-color: var(--bg); color: #fff; }
+        .glass { background: rgba(5, 5, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .terminal-header { border-bottom: 2px solid rgba(16, 185, 129, 0.4); }
+        .glow-text { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <!-- Auth Layer -->
+    <div id="auth-layer" class="fixed inset-0 z-[110] bg-black flex items-center justify-center p-4">
+        <div class="max-w-md w-full glass p-12 text-center border-t-4 border-t-emerald-500">
+            <h1 class="text-xl font-bold mb-8 text-emerald-500">SYSTEM OVERRIDE / DEV ACCESS</h1>
+            <div class="space-y-4">
+               <input id="u" type="text" placeholder="Developer ID" class="w-full bg-black/50 border border-emerald-500/30 rounded px-6 py-3 outline-none focus:border-emerald-500 text-emerald-500 text-xs">
+               <input id="p" type="password" placeholder="Passphrase" class="w-full bg-black/50 border border-emerald-500/30 rounded px-6 py-3 outline-none focus:border-emerald-500 text-emerald-500 text-xs">
+               <button onclick="checkAuth()" class="w-full bg-emerald-500 text-black font-bold py-4 rounded transition-colors active:bg-emerald-400 text-xs uppercase tracking-[0.3em]">Authorize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dev Dashboard -->
+    <div id="dev-content" class="hidden">
+        <header class="mb-12 flex justify-between items-end terminal-header pb-6">
+            <div>
+                <h1 class="text-3xl font-black text-emerald-500 glow-text italic">DEV_PANEL_NIKOLINA</h1>
+                <p class="text-[10px] text-emerald-500/50 mt-2 uppercase tracking-widest">Protocolo de Control Gemini 2.5 Native Audio</p>
+            </div>
+            <div class="text-right">
+                <span id="uptime" class="text-[10px] opacity-40">Uptime: 24h 12m 04s</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
+            <div class="glass p-6">
+                <p class="text-[9px] text-emerald-500/40 mb-2 font-bold uppercase">CPU Load</p>
+                <div class="text-2xl font-black text-emerald-400">12.4%</div>
+                <div class="w-full bg-black/50 h-1 mt-3 overflow-hidden rounded"><div class="bg-emerald-500 h-full w-[12%]"></div></div>
+            </div>
+            <div class="glass p-6">
+                <p class="text-[9px] text-emerald-500/40 mb-2 font-bold uppercase">Memory</p>
+                <div class="text-2xl font-black">2.4 / 16 GB</div>
+                <div class="w-full bg-black/50 h-1 mt-3 overflow-hidden rounded"><div class="bg-emerald-500 h-full w-[15%]"></div></div>
+            </div>
+            <div class="glass p-6">
+                <p class="text-[9px] text-emerald-500/40 mb-2 font-bold uppercase">Model Latency</p>
+                <div class="text-2xl font-black text-emerald-400">120ms</div>
+            </div>
+            <div class="glass p-6">
+                <p class="text-[9px] text-emerald-500/40 mb-2 font-bold uppercase">Assistant Status</p>
+                <div class="text-2xl font-black text-emerald-500 animate-pulse">OPERATIONAL</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[600px]">
+            <!-- LLM CONFIG -->
+            <div class="lg:col-span-5 glass p-8 flex flex-col gap-6">
+                <h3 class="text-xs font-bold text-emerald-500 tracking-widest uppercase border-b border-emerald-500/20 pb-4">Configuración del Agente</h3>
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-emerald-500/40 uppercase">LLM_ENGINE</label>
+                        <select class="w-full bg-black border border-emerald-500/30 text-emerald-500 text-xs px-4 py-3 rounded">
+                            <option>gemini-2.5-flash-native-audio-1225</option>
+                            <option>gemini-2.0-flash-exp</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-emerald-500/40 uppercase">Voice_Personality</label>
+                        <select class="w-full bg-black border border-emerald-500/30 text-emerald-500 text-xs px-4 py-3 rounded">
+                            <option>Aoede (Feminine)</option>
+                            <option>Charon (Masculine)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-emerald-500/40 uppercase">Agent_Temperature</label>
+                        <div class="flex items-center gap-4">
+                            <input type="range" class="flex-1 accent-emerald-500">
+                            <span class="text-xs text-emerald-500">0.7</span>
+                        </div>
+                    </div>
+                    <button class="w-full bg-emerald-500/10 border border-emerald-500 text-emerald-500 py-4 text-[10px] font-bold uppercase tracking-widest mt-4">Actualizar Pipeline</button>
+                    <button class="w-full bg-rose-500/10 border border-rose-500/50 text-rose-500 py-4 text-[10px] font-bold uppercase tracking-widest">Reiniciar Worker</button>
+                </div>
+            </div>
+
+            <!-- LOGS -->
+            <div class="lg:col-span-12 lg:col-start-6 glass p-2 flex flex-col bg-black overflow-hidden border-2 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                <div class="p-4 flex items-center justify-between border-b border-white/5">
+                    <span class="text-[10px] font-black tracking-widest text-emerald-500 italic">SYSTEM_LOGS.EXE</span>
+                    <span class="text-[9px] text-emerald-500/20">LIVE_RELIABILITY_FEED</span>
+                </div>
+                <div id="logs" class="flex-1 overflow-y-auto p-4 text-[10px] space-y-2 text-emerald-500/60 custom-scrollbar">
+                    <p>[2026-03-30 01:12:45] <span class="text-emerald-400">INFO:</span> Nikolina Agent Started</p>
+                    <p>[2026-03-30 01:12:45] <span class="text-emerald-400">INFO:</span> Connect to wss://msbross.livekit.cloud</p>
+                    <p>[2026-03-30 01:12:46] <span class="text-emerald-400">INFO:</span> Google Realtime session established :: gemini-2.5-flash-native-audio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const u = document.getElementById('u').value;
+            const p = document.getElementById('p').value;
+            if (u === 'admin' && p === 'nikolina2026') {
+                document.getElementById('auth-layer').classList.add('hidden');
+                document.getElementById('dev-content').classList.remove('hidden');
+                localStorage.setItem('nikolina_dev_auth', 'true');
+            }
+        }
+        if(localStorage.getItem('nikolina_dev_auth') === 'true') {
+             document.getElementById('auth-layer').classList.add('hidden');
+             document.getElementById('dev-content').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

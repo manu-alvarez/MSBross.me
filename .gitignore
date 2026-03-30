@@ -1,5 +1,7 @@
 # Ignore sensitive env and deployment credentials
 .env
+.env.local
+.env.production
 .vscode/
 node_modules/
 __pycache__/
@@ -8,3 +10,24 @@ __pycache__/
 
 # Build assets
 web_dist/**/assets/*.js
+dist/
+build/
+
+# Python virtual environments
+venv/
+.venv/
+livekit-backend/server/venv/
+msal_env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.bak

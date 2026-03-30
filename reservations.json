@@ -1,0 +1,35 @@
+[
+    {
+        "id": -6295753409582326064,
+        "nombre": "Manuel",
+        "fecha": "2026-03-19",
+        "hora": "14:00",
+        "pax": 3,
+        "phone": "651352065",
+        "status": "confirmed",
+        "requests": "1 comensal con intolerancia al gluten",
+        "timestamp": "2026-03-18 00:47:32"
+    },
+    {
+        "id": -4862145261588236209,
+        "nombre": "Manuel",
+        "fecha": "2026-03-19",
+        "hora": "21:00",
+        "pax": 3,
+        "phone": "651352065",
+        "status": "confirmed",
+        "requests": "Uno de los comensales es intolerante al gluten.",
+        "timestamp": "2026-03-19 16:16:29"
+    },
+    {
+        "id": -4186228550495335092,
+        "nombre": "Manuel",
+        "fecha": "2026-03-26",
+        "hora": "22:00",
+        "pax": 3,
+        "phone": "666666666",
+        "status": "confirmed",
+        "requests": "Uno de los comensales es intolerante al gluten.",
+        "timestamp": "2026-03-25 02:16:41"
+    }
+]

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  iaputa-backend:
+    build: .
+    container_name: iaputa-os-core
+    ports:
+      - "8006:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./temp_audio:/app/temp_audio
+      - ./temp_vision:/app/temp_vision
+    restart: unless-stopped
+    
+  iaputa-frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: iaputa-os-frontend
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+    restart: unless-stopped
+    depends_on:
+      - iaputa-backend

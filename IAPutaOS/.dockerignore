@@ -1,0 +1,36 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+venv
+.venv
+
+# IDE
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets — NEVER send to Docker build context
+token.json
+credentials.json
+.env
+
+# Temp data
+temp_audio/*
+temp_vision/*
+scripts/*
+*.db
+
+# Frontend (served by separate Nginx container)
+frontend/node_modules
+frontend/.cache
+
+# Misc
+*.zip
+core.old.py

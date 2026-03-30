@@ -1,0 +1,51 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Keys & Auth
+credentials.json
+token.json
+msal_token.json
+secret.key
+*.pem
+*.key
+
+# Temp files
+temp_audio/
+temp_vision/
+temp_transfer/
+temp_github/
+scripts/dynamic_*
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node & Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+frontend/.env

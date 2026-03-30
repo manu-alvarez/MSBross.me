@@ -1,121 +1,147 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+const API_URL = '/api.php';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activeTab, setActiveTab] = useState('routine');
+  const [familyTasks, setFamilyTasks] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
+  const [newItem, setNewItem] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const tasksRes = await fetch(`${API_URL}?action=get_family_tasks`);
+      const listRes = await fetch(`${API_URL}?action=get_shopping_list`);
+      setFamilyTasks(await tasksRes.json());
+      setShoppingList(await listRes.json());
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+      setLoading(false);
+    }
+  };
+
+  const toggleTask = async (id, done) => {
+    const updated = familyTasks.map(t => t.id === id ? { ...t, done: !done } : t);
+    setFamilyTasks(updated);
+    await fetch(`${API_URL}?action=update_family_task`, {
+      method: 'POST',
+      body: JSON.stringify({ id, done: !done })
+    });
+  };
+
+  const toggleShopping = async (id, bought) => {
+    const updated = shoppingList.map(item => item.id === id ? { ...item, bought: !bought } : item);
+    setShoppingList(updated);
+    await fetch(`${API_URL}?action=update_shopping_item`, {
+      method: 'POST',
+      body: JSON.stringify({ id, bought: !bought })
+    });
+  };
+
+  const addShoppingItem = async (e) => {
+    e.preventDefault();
+    if (!newItem) return;
+    const res = await fetch(`${API_URL}?action=update_shopping_item`, {
+      method: 'POST',
+      body: JSON.stringify({ add: true, name: newItem, category: 'General' })
+    });
+    setShoppingList(await res.json());
+    setNewItem('');
+  };
+
+  const deleteShoppingItem = async (id) => {
+    const res = await fetch(`${API_URL}?action=update_shopping_item`, {
+      method: 'POST',
+      body: JSON.stringify({ delete: true, id })
+    });
+    setShoppingList(await res.json());
+  };
+
+  if (loading) return <div className="loading">Sincronizando Hogar...</div>;
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="family-container">
+      <header>
+        <div className="branding">
+          <h1>TaskFlow<span>PRO</span></h1>
+          <p>Misión: Logística Familiar</p>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        <nav className="tabs">
+          <button 
+            className={activeTab === 'routine' ? 'active' : ''} 
+            onClick={() => setActiveTab('routine')}
+          >
+            📅 Rutina Diaria
+          </button>
+          <button 
+            className={activeTab === 'shopping' ? 'active' : ''} 
+            onClick={() => setActiveTab('shopping')}
+          >
+            🛒 Lista de Compra
+          </button>
+        </nav>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="content glass-panel">
+        {activeTab === 'routine' ? (
+          <div className="routine-view">
+            <div className="timeline">
+              {familyTasks.map(task => (
+                <div key={task.id} className={`task-card ${task.done ? 'done' : ''}`} onClick={() => toggleTask(task.id, task.done)}>
+                  <span className="time">{task.time}</span>
+                  <div className="task-info">
+                    <h3>{task.title}</h3>
+                    <span className="category">{task.category}</span>
+                  </div>
+                  <div className="checkbox">
+                    {task.done ? '✓' : ''}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="shopping-view">
+            <form className="add-item" onSubmit={addShoppingItem}>
+              <input 
+                type="text" 
+                placeholder="Añadir a la cesta..." 
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+              />
+              <button type="submit">+</button>
+            </form>
+            <div className="items-list">
+              {shoppingList.map(item => (
+                <div key={item.id} className={`shopping-item ${item.bought ? 'bought' : ''}`}>
+                  <span className="check" onClick={() => toggleShopping(item.id, item.bought)}>
+                    {item.bought ? '🔘' : '⚪'}
+                  </span>
+                  <span className="name">{item.name}</span>
+                  <span className="category-tag">{item.category}</span>
+                  <button className="del" onClick={() => deleteShoppingItem(item.id)}>×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <footer>
+        <div className="status-bar">
+          <span>{familyTasks.filter(t => t.done).length}/{familyTasks.length} Tareas</span>
+          <span>{shoppingList.filter(i => i.bought).length}/{shoppingList.length} Comprados</span>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOHLER • LUXURY CHRONOGRAPH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Outfit:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --bg: #050508; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; }
+        .lux-font { font-family: 'Cinzel', serif; }
+        .glass-obsidian { background: rgba(5, 5, 10, 0.7); backdrop-filter: blur(40px); border: 1px solid rgba(212, 175, 55, 0.1); box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+        .gold-border { border-color: rgba(212, 175, 55, 0.2); }
+        .gold-sparkle { background: linear-gradient(90deg, #d4af37, #fef1b6, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .timer-ring { transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12 bg-[#050508]">
+    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div class="space-y-2">
+            <h1 class="lux-font text-5xl font-black gold-sparkle tracking-[0.3em] uppercase">Dohler</h1>
+            <p class="text-[10px] text-slate-500 uppercase tracking-[0.8em]">Precision Chronograph • SOTA Architecture</p>
+        </div>
+        <div class="flex gap-4">
+            <div class="glass-obsidian px-6 py-3 rounded-2xl flex items-center gap-4 gold-border">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-black">Motor Sincronizado</span>
+            </div>
+            <a href="/" class="glass-obsidian p-3 rounded-2xl hover:bg-white/5 transition-all"><i data-lucide="home" class="w-4 h-4 text-slate-500"></i></a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <!-- Luxury Timer -->
+        <section class="lg:col-span-5">
+            <div class="glass-obsidian p-12 rounded-[4rem] flex flex-col items-center justify-center relative overflow-hidden group border-gold-border">
+                <div class="relative w-72 h-72 flex items-center justify-center mb-10">
+                    <svg class="absolute inset-0 w-full h-full">
+                        <circle cx="144" cy="144" r="130" stroke="rgba(212,175,55,0.05)" stroke-width="4" fill="none" />
+                        <circle id="progress-ring" class="timer-ring" cx="144" cy="144" r="130" stroke="#d4af37" stroke-width="4" stroke-dasharray="816.8" stroke-dashoffset="0" fill="none" stroke-linecap="round" />
+                    </svg>
+                    <div class="text-center z-10">
+                        <p id="timer-label" class="text-[9px] lux-font uppercase tracking-[0.4em] mb-4 text-slate-500">Focus Session</p>
+                        <h2 id="timer-display" class="lux-font text-7xl font-black tracking-tighter gold-sparkle">25:00</h2>
+                    </div>
+                </div>
+                
+                <div class="flex gap-6 z-10">
+                    <button onclick="toggleTimer()" id="timer-btn" class="w-20 h-20 rounded-3xl bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/30 flex items-center justify-center hover:bg-[#d4af37]/20 transition-all active:scale-95">
+                        <i data-lucide="play" class="w-8 h-8" id="timer-icon"></i>
+                    </button>
+                    <button onclick="resetTimer()" class="w-20 h-20 rounded-3xl bg-white/5 text-slate-500 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all">
+                        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <div class="mt-10 flex gap-4 z-10">
+                    <button onclick="setMode('focus')" id="btn-focus" class="px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-[#d4af37] text-black">Focus</button>
+                    <button onclick="setMode('break')" id="btn-break" class="px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-white/5 text-slate-500">Break</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Luxury Objectives -->
+        <section class="lg:col-span-7">
+            <div class="glass-obsidian rounded-[3rem] p-12 flex flex-col h-full min-h-[650px] border-gold-border">
+                <div class="flex items-center justify-between mb-12">
+                    <h2 class="lux-font text-xl font-black uppercase tracking-[0.3em] gold-sparkle">Misión de Objetivos</h2>
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono" id="task-counter">0 Procesos</span>
+                </div>
+                
+                <div class="flex gap-4 mb-12">
+                    <input id="task-input" type="text" placeholder="Inyectar nuevo protocolo..." 
+                        class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-sm outline-none focus:border-[#d4af37]/50 transition-all font-light tracking-widest placeholder-white/10">
+                    <button onclick="addTask()" class="bg-[#d4af37] text-black w-16 h-16 rounded-2xl flex items-center justify-center hover:scale-105 transition-all shadow-xl shadow-[#d4af37]/20">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <div id="task-list" class="flex-1 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('dohler_tasks')) || [];
+        let timeLeft = 1500; let totalTime = 1500; let timerId = null; let mode = 'focus';
+
+        async function init() { lucide.createIcons(); render(); updateTimerDisplay(); }
+
+        function render() {
+            const list = document.getElementById('task-list');
+            document.getElementById('task-counter').innerText = `${tasks.length} Procesos`;
+            list.innerHTML = tasks.length ? tasks.map(t => `
+                <div class="glass-obsidian p-6 rounded-3xl border-white/5 group relative overflow-hidden">
+                    <div class="flex items-center justify-between relative z-10">
+                        <div class="flex items-center gap-6">
+                            <button onclick="toggleTask('${t.id}')" class="w-8 h-8 rounded-xl border flex items-center justify-center transition-all ${t.completed ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/10 text-white/10 hover:border-[#d4af37]'}">
+                                ${t.completed ? '<i data-lucide="check" class="w-5 h-5"></i>' : ''}
+                            </button>
+                            <span class="${t.completed ? 'line-through text-slate-500 opacity-50' : 'text-slate-100'} font-medium tracking-wide uppercase text-xs">${t.title}</span>
+                        </div>
+                        <button onclick="deleteTask('${t.id}')" class="p-2 text-slate-700 hover:text-rose-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `).join('') : '<div class="flex flex-col items-center justify-center h-full opacity-10 py-10"><i data-lucide="layers" class="w-20 h-20 mb-4"></i><p class="lux-font text-[10px] tracking-[0.5em] uppercase">No hay protocolos activos</p></div>';
+            
+            localStorage.setItem('dohler_tasks', JSON.stringify(tasks));
+            lucide.createIcons();
+        }
+
+        function toggleTimer() {
+            if (timerId) {
+                clearInterval(timerId); timerId = null;
+                document.getElementById('timer-icon').setAttribute('data-lucide', 'play');
+            } else {
+                timerId = setInterval(() => {
+                    timeLeft--; updateTimerDisplay();
+                    if (timeLeft <= 0) { clearInterval(timerId); timerId = null; alert('Ciclo Dohler completado'); resetTimer(); }
+                }, 1000);
+                document.getElementById('timer-icon').setAttribute('data-lucide', 'pause');
+            }
+            lucide.createIcons();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
+            document.getElementById('timer-display').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            const offset = 816.8 - (timeLeft / totalTime * 816.8);
+            document.getElementById('progress-ring').style.strokeDashoffset = offset;
+        }
+
+        function resetTimer() { timeLeft = mode === 'focus' ? 1500 : 300; totalTime = timeLeft; updateTimerDisplay(); }
+
+        function setMode(m) {
+            mode = m; resetTimer();
+            document.getElementById('btn-focus').className = m === 'focus' ? 'px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-[#d4af37] text-black' : 'px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-white/5 text-slate-500';
+            document.getElementById('btn-break').className = m === 'break' ? 'px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-[#d4af37] text-black' : 'px-6 py-2 rounded-full text-[9px] lux-font font-black uppercase tracking-widest bg-white/5 text-slate-500';
+            document.getElementById('timer-label').innerText = m === 'focus' ? 'Focus Session' : 'Refrigeración';
+        }
+
+        function addTask() {
+            const input = document.getElementById('task-input'); if (!input.value) return;
+            tasks.push({ id: Date.now().toString(), title: input.value, completed: false });
+            input.value = ''; render();
+        }
+        function toggleTask(id) { tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t); render(); }
+        function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); render(); }
+
+        init();
+    </script>
+</body>
+</html>

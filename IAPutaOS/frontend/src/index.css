@@ -9,10 +9,10 @@
   body {
     margin: 0;
     overflow: hidden;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #f0f0ff;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: #f8fafc;
     -webkit-font-smoothing: antialiased;
-    background-color: #000;
+    background-color: #020204;
   }
 }
 
@@ -31,9 +31,9 @@
     position: absolute;
     inset: 0;
     background-image: 
-      radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.05) 0%, transparent 40%);
-    filter: blur(60px);
+      radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.08) 0%, transparent 40%);
+    filter: blur(80px);
     z-index: 1;
     pointer-events: none;
   }
@@ -126,16 +126,16 @@
 
   .neural-title-v7 {
     margin-top: -50px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 900;
-    font-size: 2.5rem;
-    letter-spacing: -0.02em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    letter-spacing: -0.04em;
     text-transform: uppercase;
-    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.2) 100%);
+    background: linear-gradient(180deg, #fff 30%, rgba(255, 255, 255, 0.4) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+    filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
   }
 
   .interface-footer {

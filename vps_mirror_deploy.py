@@ -1,5 +1,6 @@
 import ftplib
 import os
+import subprocess
 
 FTP_HOST = os.getenv('FTP_HOST', 'msbros.ftp.tb-hosting.com')
 FTP_USER = os.getenv('FTP_USER', 'msbrossme@msbrossme')
@@ -15,26 +16,25 @@ REMOTE_BASE = os.getenv('REMOTE_BASE', '/www')
 
 # Deployment mapping: (local_source, remote_dest)
 DEPLOY_LIST = [
-    # Hub and API
+    # Hub and API Gateway (The Brain)
     (f"{LOCAL_ROOT}/index.html", f"{REMOTE_BASE}/index.html"),
     (f"{LOCAL_ROOT}/api.php", f"{REMOTE_BASE}/api.php"),
-    (f"{LOCAL_ROOT}/api.php", f"{REMOTE_BASE}/traductor/api.php"),
     
-    # Standalone Apps (Web Dist)
-    (f"{LOCAL_ROOT}/web_dist/nikolina.html", f"{REMOTE_BASE}/nikolina.html"),
-    (f"{LOCAL_ROOT}/web_dist/nikolina.html", f"{REMOTE_BASE}/nikolina/index.html"),
-    (f"{LOCAL_ROOT}/web_dist/admin", f"{REMOTE_BASE}/admin"),
-    (f"{LOCAL_ROOT}/web_dist/dev", f"{REMOTE_BASE}/dev"),
-    (f"{LOCAL_ROOT}/web_dist/taskflow", f"{REMOTE_BASE}/taskflow"),
-    (f"{LOCAL_ROOT}/web_dist/dohler", f"{REMOTE_BASE}/dohler"),
-    (f"{LOCAL_ROOT}/web_dist/logisearch", f"{REMOTE_BASE}/logisearch"),
-    (f"{LOCAL_ROOT}/web_dist/iaputa", f"{REMOTE_BASE}/iaputa"),
+    # Nikolina AI (Voice Assistant)
+    (f"{LOCAL_ROOT}/livekit-frontend/dist", f"{REMOTE_BASE}/nikolina"),
     
-    # Moko-Translate (Traductor Neural)
-    (f"{LOCAL_ROOT}/Traductor/client/dist", f"{REMOTE_BASE}/moko"),
+    # IAPuta OS (Cognitive System)
+    (f"{LOCAL_ROOT}/IAPutaOS/frontend/dist", f"{REMOTE_BASE}/iaputa"),
+    
+    # Moko-Translate (Neural Translation)
     (f"{LOCAL_ROOT}/Traductor/client/dist", f"{REMOTE_BASE}/traductor"),
+    (f"{LOCAL_ROOT}/Traductor/client/dist", f"{REMOTE_BASE}/moko"),
     
-    # Legacy / Backups
+    # DOHLER (Task Architecture)
+    (f"{LOCAL_ROOT}/dohler_src/frontend/dist", f"{REMOTE_BASE}/dohler"),
+    
+    # TaskFlow Pro & Legacy
+    (f"{LOCAL_ROOT}/taskflow_pro_src/dist", f"{REMOTE_BASE}/taskflow"),
     (f"{VPS_BACKUP}/COMBIPRO", f"{REMOTE_BASE}/combipro"),
 ]
 
@@ -58,10 +58,35 @@ def ensure_dir(ftp, remote_dir):
         except:
             pass
 
+def build_projects():
+    print("🔨 Construyendo proyectos React/Vite para Cache-Busting y sincronización...")
+    build_commands = [
+        (f"{LOCAL_ROOT}/IAPutaOS/frontend", "npm run build"),
+        (f"{LOCAL_ROOT}/livekit-frontend", "npm run build"),
+        (f"{LOCAL_ROOT}/Traductor/client", "npm run build"),
+        (f"{LOCAL_ROOT}/dohler_src/frontend", "npm run build"),
+        (f"{LOCAL_ROOT}/taskflow_pro_src", "npm run build")
+    ]
+    
+    for d, cmd in build_commands:
+        if os.path.exists(d):
+            print(f"  👉 Construyendo en {d}...")
+            try:
+                subprocess.run(cmd, cwd=d, shell=True, check=True, stdout=subprocess.DEVNULL)
+            except subprocess.CalledProcessError:
+                print(f"  ❌ Error construyendo {d}")
+        else:
+            print(f"  ⚠️ Ignorando {d} (No existe)")
+
 def main():
-    print(f"🚀 Iniciando despliegue en {FTP_HOST}...")
-    ftp = ftplib.FTP(FTP_HOST)
-    ftp.login(FTP_USER, FTP_PASS)
+    build_projects()
+    print(f"\n🚀 Iniciando despliegue en {FTP_HOST}...")
+    try:
+        ftp = ftplib.FTP(FTP_HOST)
+        ftp.login(FTP_USER, FTP_PASS)
+    except Exception as e:
+        print(f"❌ Error de conexión FTP: {e}")
+        return
 
     for local_source, remote_dest in DEPLOY_LIST:
         print(f"\nProcesando: {os.path.basename(local_source)} -> {remote_dest}")

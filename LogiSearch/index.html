@@ -1,32 +1,373 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="./logo.svg" />
-  <link rel="apple-touch-icon" href="./pwa-192x192.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description"
-    content="LogiSearch AI — Buscador inteligente de logística. Calcula rutas, costos y encuentra transportistas con inteligencia artificial." />
-  <meta name="theme-color" content="#00B4D8" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LogiSearch" />
-  <meta property="og:title" content="LogiSearch AI — Logística Inteligente" />
-  <meta property="og:description"
-    content="Calcula tu envío con IA: rutas óptimas, costos precisos y transportistas recomendados." />
-  <meta property="og:type" content="website" />
-  <title>LogiSearch AI — Logística Inteligente</title>
-  <script type="module" crossorigin src="./assets/index-DwlugCO_.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/vendor-mui-lXqgskaM.js">
-  <link rel="modulepreload" crossorigin href="./assets/vendor-motion-B1hPOGNa.js">
-  <link rel="modulepreload" crossorigin href="./assets/vendor-pdf-DL3QjiAy.js">
-  <link rel="modulepreload" crossorigin href="./assets/vendor-supabase-CpRTRdvQ.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-MZQ55EV_.css">
-<link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>LogiSearch AI // NEXUS UNIFIED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a;--s1:#1e293b;--s2:#2d3f55;--s3:#3d5068;
+  --a:#3b82f6;--a2:#06b6d4;--g:#10b981;--y:#f59e0b;--r:#ef4444;--p:#a855f7;
+  --tx:#f1f5f9;--mu:#94a3b8;--bd:rgba(148,163,184,0.13);
+  --accent-glow: rgba(59, 130, 246, 0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit', sans-serif;}
+body{display:flex;flex-direction:column;min-height:100vh; background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent 40%);}
 
+/* ─── HEADER ─── */
+header{
+  padding:20px 24px;background:var(--s1);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-ic{width:40px;height:40px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 3px 15px var(--accent-glow);}
+.brand-tx{font-size:18px;font-weight:800;letter-spacing: -0.5px; background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.brand-sub{font-size:10px;color:var(--mu); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px;}
+.hdr-right{display:flex;align-items:center;gap:15px;}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu); font-weight: 600;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow: 0 0 10px var(--g); animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ─── MODE TABS ─── */
+.mode-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 24px;background:rgba(15, 23, 42, 0.5);border-bottom:1px solid var(--bd);
+}
+.mode-tab{
+  padding:10px 20px;border-radius:12px;border:none;background:none;
+  color:var(--mu);font-size:13px;cursor:pointer;transition:all .2s;font-weight:600;
+}
+.mode-tab:hover{color:var(--tx);background:rgba(255,255,255,.05);}
+.mode-tab.on{background:rgba(59,130,246,.15);color:#60a5fa; border: 1px solid rgba(59,130,246,0.3);}
+
+/* ─── CONTENT ─── */
+.content{flex:1;overflow-y:auto;padding:32px 24px;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--s2);border-radius:4px;}
+
+/* ─── SEARCH HERO ─── */
+.smart-hero{max-width:720px;margin:0 auto;text-align:center;padding-bottom:30px;}
+.smart-hero h1{font-size:2.5rem;font-weight:800;margin-bottom:10px; letter-spacing: -1.5px;}
+.smart-hero p{font-size:15px;color:var(--mu);line-height:1.6; max-width: 500px; margin: 0 auto;}
+
+.smart-bar{
+  display:flex;align-items:center;gap:0;
+  background:var(--s1);border:1px solid var(--bd);
+  border-radius:20px;margin:30px 0 15px;overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  transition:all .3s ease;
+}
+.smart-bar:focus-within{border-color:var(--a);box-shadow:0 0 0 4px var(--accent-glow);}
+.smart-ic{padding:0 18px;font-size:22px;flex-shrink:0;color:var(--mu);}
+#smartInput{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--tx);font-size:16px;padding:18px 0;font-family:inherit;
+}
+.smart-send{
+  margin:8px;padding:12px 24px;border-radius:14px;border:none;
+  background:var(--a); color:white;font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .2s;
+}
+.smart-send:hover{background: #2563eb; transform: translateY(-1px);}
+
+.intent-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:24px;font-size:12px;font-weight:700;
+  background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);
+  margin-bottom:15px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.intent-chip.hidden{display:none;}
+
+/* ─── SUGGESTIONS ─── */
+.suggestions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px;}
+.sug{
+  padding:8px 18px;border-radius:24px;font-size:12.5px;cursor:pointer;
+  background:rgba(255,255,255,0.03);border:1px solid var(--bd);color:var(--mu);transition:all .2s;
+}
+.sug:hover{color:var(--tx);border-color:var(--a); background: rgba(59,130,246,0.05);}
+
+/* ─── RESULT CARD ─── */
+.result-area{max-width:720px;margin:0 auto;}
+.ra-card{
+  background:rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border); border-radius:24px;
+  padding:24px;margin-bottom:20px;
+  animation:fi .4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fi{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.ra-card h3{font-size:16px;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:10px;}
+
+/* ─── TABLES ─── */
+.ra-card table{width:100%;border-collapse:collapse;font-size:13.5px; margin-top: 10px;}
+.ra-card th{background:rgba(255,255,255,0.02);padding:10px 14px;text-align:left;font-size:11px; text-transform: uppercase; color: var(--mu);}
+.ra-card td{padding:12px 14px;border-bottom:1px solid var(--bd);}
+
+/* ─── TOOLS GRID ─── */
+.tools-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;max-width:1000px;margin:0 auto;
+}
+.tool-card{
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:24px 20px;cursor:pointer;transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align:center; position:relative; overflow:hidden;
+}
+.tool-card:hover{border-color:var(--a); transform:translateY(-5px); box-shadow:0 15px 35px rgba(0,0,0,0.4);}
+.tc-icon{font-size:36px;margin-bottom:15px;}
+.tc-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.tc-desc{font-size:12px;color:var(--mu);line-height:1.5;}
+
+/* ─── LINK GRID ─── */
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;}
+.ll{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:16px;
+  text-decoration:none;color:var(--tx);font-size:13px;transition:all .2s;
+}
+.ll:hover{border-color:var(--a);background:rgba(59,130,246,.1); transform: translateX(4px);}
+
+/* ─── CARDS ─── */
+.ra-code{
+  background:rgba(0,0,0,0.2); border-left:4px solid var(--a); border-radius:12px;
+  padding:16px 20px;font-size:13px;line-height:1.8; color: #cbd5e1; font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── WIZARD ─── */
+.wizard{max-width:600px;margin:0 auto; animation:fi .4s ease;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.field input, .field select{
+  width:100%; background:var(--s1); border:1px solid var(--bd); border-radius:14px;
+  padding:14px 18px; color:var(--tx); font-size:15px; outline:none; transition: all .2s;
+}
+.field input:focus{border-color: var(--a); box-shadow: 0 0 0 4px var(--accent-glow);}
+
+.run-btn{
+  width:100%;padding:16px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,#3b82f6,#06b6d4);
+  color:white;font-size:15px;font-weight:800;text-transform: uppercase; letter-spacing: 1px; cursor:pointer;
+  margin-top:10px; transition:all .2s;
+  box-shadow:0 8px 20px rgba(59,130,246,.3);
+}
+.run-btn:hover{transform: translateY(-2px); box-shadow:0 12px 25px rgba(59,130,246,.4);}
+
+@media(max-width:600px){
+  h1 { font-size: 1.8rem; }
+  .tools-grid{grid-template-columns:1fr 1fr;}
+  .link-grid{grid-template-columns:1fr;}
+  .content{padding:20px 16px;}
+}
+</style>
+</head>
 <body>
-  <div id="root"></div>
-</body>
 
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-ic">📦</div>
+    <div><div class="brand-tx">LogiSearch AI</div><div class="brand-sub">NEXUS UNIFIED v4.0</div></div>
+  </div>
+  <div class="hdr-right">
+    <div class="status"><div class="dot"></div>System Link Ready</div>
+  </div>
+</header>
+
+<!-- MODE TABS -->
+<div class="mode-bar">
+  <button class="mode-tab on" id="tab1" onclick="showMode(1)">🔍 Búsqueda IA</button>
+  <button class="mode-tab" id="tab2" onclick="showMode(2)">🛠 Nexus Tools</button>
+</div>
+
+<!-- APP CONTENT -->
+<div class="app">
+  <div class="content" id="content">
+    <!-- rendered by JS -->
+  </div>
+</div>
+
+<script>
+let currentMode = 1;
+
+function showMode(m){
+  currentMode = m;
+  document.getElementById('tab1').classList.toggle('on', m===1);
+  document.getElementById('tab2').classList.toggle('on', m===2);
+  if(m===1) renderSmartSearch();
+  else renderToolSelector();
+}
+
+function renderSmartSearch(){
+  document.getElementById('content').innerHTML = `
+  <div class="smart-hero">
+    <h1>Logística Inteligente</h1>
+    <p>Rastrea contenedores, buques, calcula CBM o genera fletes con lenguaje natural.</p>
+
+    <div class="smart-bar">
+      <span class="smart-ic">🧠</span>
+      <input id="smartInput" placeholder="Ej: tracking MSKU1234567 / buque MAERSK DANUBE / flete MIA RTM..."
+        onkeydown="if(event.key==='Enter')runSmart()" oninput="detectIntent(this.value)" />
+      <button class="smart-send" onclick="runSmart()">Ejecutar</button>
+    </div>
+
+    <div class="intent-chip hidden" id="intentChip">🎯 <span id="intentTxt"></span></div>
+
+    <div class="suggestions">
+      <span class="sug" onclick="fillSmart('MSKU1234567')">📦 Tracking Contenedor</span>
+      <span class="sug" onclick="fillSmart('vessel MAERSK DANUBE')">🚢 Posición Buque</span>
+      <span class="sug" onclick="fillSmart('flete Miami Rotterdam 2026')">💲 Flete RTM</span>
+      <span class="sug" onclick="fillSmart('email flete negociación')">✉️ Email Negociación</span>
+    </div>
+  </div>
+  <div class="result-area" id="resultArea"></div>`;
+}
+
+function fillSmart(v){ document.getElementById('smartInput').value = v; detectIntent(v); runSmart(); }
+
+// --- INTENT ENGINE ---
+const INTENTS = [
+  { id:'container', label:'Tracking Contenedor', icon:'📦', test: m => /\b[A-Z]{3}[UJZ]\d{7}\b/i.test(m) },
+  { id:'vessel', label:'Tracking Buque AIS', icon:'🚢', test: m => /(buque|vessel|barco|ship|ais|maersk|msc|cma)/i.test(m) },
+  { id:'freight', label:'Búsqueda Fletes', icon:'💲', test: m => /(flete|tarifa|precio|rate|coste)/i.test(m) },
+  { id:'email', label:'Generador Email', icon:'✉️', test: m => /(email|correo|plantilla)/i.test(m) },
+  { id:'cbm', label:'Calcular CBM', icon:'📐', test: m => /(cbm|volumen|cubica)/i.test(m) },
+  { id:'search', label:'Búsqueda Global', icon:'🌐', test: () => true }
+];
+
+function getIntent(m){ for(const i of INTENTS){ if(i.test(m)) return i; } return INTENTS[INTENTS.length-1]; }
+
+function detectIntent(v){
+  const chip = document.getElementById('intentChip');
+  const txt = document.getElementById('intentTxt');
+  if(!v || v.length < 3) { chip.classList.add('hidden'); return; }
+  const i = getIntent(v);
+  txt.textContent = i.icon + ' ' + i.label;
+  chip.classList.remove('hidden');
+}
+
+async function runSmart(){
+  const v = document.getElementById('smartInput').value.trim();
+  if(!v) return;
+  const area = document.getElementById('resultArea');
+  const intent = getIntent(v);
+  
+  area.innerHTML = '<div style="text-align:center; padding:20px; color:var(--a);">Analizando Nexus...</div>';
+  await new Promise(r => setTimeout(r, 600));
+
+  let html = '';
+  if(intent.id === 'container'){
+    const m = v.match(/([A-Z]{3}[UJZ]\d{7})/i);
+    html = buildContainerResult(m ? m[1].toUpperCase() : v.toUpperCase());
+  } else if(intent.id === 'vessel'){
+    html = buildVesselResult(v);
+  } else if(intent.id === 'freight'){
+    html = buildFreightResult(v);
+  } else if(intent.id === 'email'){
+    html = buildEmailResult(v);
+  } else if(intent.id === 'cbm'){
+    html = buildCBMResult();
+  } else {
+    html = `<div class="ra-card"><h3>🌐 Búsqueda General</h3><p style="color:var(--mu)">Solicitud no categorizada. Lanzando búsqueda global en msbross.me gateway...</p></div>`;
+  }
+  area.innerHTML = html;
+}
+
+// --- BUILDERS (LogistiTrack Engine) ---
+function buildContainerResult(c){
+  const e = encodeURIComponent(c);
+  return `<div class="ra-card">
+    <h3>📦 Tracking Contenedor: <span style="color:var(--a)">${c}</span></h3>
+    <p style="font-size:13px; color:var(--mu); margin-bottom:15px;">Detectando naviera en red NEXUS... Selecciona el portal:</p>
+    <div class="link-grid">
+      <a class="ll" href="https://www.maersk.com/tracking/${e}" target="_blank">🔵 Maersk Tracking</a>
+      <a class="ll" href="https://www.msc.com/track-a-shipment?trackingNumber=${e}" target="_blank">🟡 MSC Tracking</a>
+      <a class="ll" href="https://www.cma-cgm.com/ebusiness/tracking/search?number=${e}" target="_blank">🔴 CMA CGM</a>
+      <a class="ll" href="https://www.hapag-lloyd.com/en/online-business/tracing/tracing-by-booking.html?blno=${e}" target="_blank">🟠 Hapag-Lloyd</a>
+    </div>
+  </div>`;
+}
+
+function buildVesselResult(n){
+  const e = encodeURIComponent(n);
+  return `<div class="ra-card">
+    <h3>🚢 Buque AIS: <span style="color:var(--a)">${n.toUpperCase()}</span></h3>
+    <div class="link-grid">
+      <a class="ll" href="https://www.marinetraffic.com/en/ais/index/search/all/keyword:${e}" target="_blank">🌊 MarineTraffic Live</a>
+      <a class="ll" href="https://www.vesselfinder.com/?name=${e}" target="_blank">🔭 VesselFinder Tracking</a>
+    </div>
+  </div>`;
+}
+
+function buildFreightResult(q){
+  return `<div class="ra-card">
+    <h3>💲 Referencia de Fletes (MIA-RTM 2026)</h3>
+    <table><tr><th>Equipo</th><th>Costo Marítimo</th><th>Locales</th></tr>
+    <tr><td>20' FCL</td><td>$1.850 - $2.200</td><td>$1.700</td></tr>
+    <tr><td>40' FCL</td><td>$2.050 - $2.500</td><td>$1.950</td></tr></table>
+    <div style="margin-top:15px;"><span class="intent-chip">ESTIMADO NEXUS: 7.950$ ALL-IN (2 CTNS)</span></div>
+  </div>`;
+}
+
+function buildEmailResult(q){
+  const t = `Subject: Rate Review – MIA-RTM Quotation\n\nHi [Partner],\n\nThank you for the rate. Considering we are committing 2 containers (1x20' + 1x40') on the same vessel, would it be possible to improve the total all-in price?\n\nBest regards,\n[LogiSearch User]`;
+  return `<div class="ra-card">
+    <h3>✉️ Plantilla de Negociación</h3>
+    <div class="ra-code">${t}</div>
+    <button class="run-btn" style="margin-top:15px; padding:10px;" onclick="navigator.clipboard.writeText(\`${t}\`)">Copiar al portapapeles</button>
+  </div>`;
+}
+
+function buildCBMResult(){
+  return `<div class="ra-card">
+    <h3>📐 Calculadora CBM</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+      <input id="l" placeholder="Largo cm" value="120">
+      <input id="w" placeholder="Ancho cm" value="80">
+      <input id="h" placeholder="Alto cm" value="144">
+      <input id="q" placeholder="Unidades" value="1">
+    </div>
+    <button class="run-btn" onclick="calcCBM()">Calcular</button>
+    <div id="cbmR" style="margin-top:15px; color:var(--a); font-weight:800;"></div>
+  </div>`;
+}
+function calcCBM(){
+  const l=document.getElementById('l').value, w=document.getElementById('w').value, h=document.getElementById('h').value, q=document.getElementById('q').value;
+  const tot = (l*w*h/1000000)*q;
+  document.getElementById('cbmR').textContent = `VOLUMEN TOTAL: ${tot.toFixed(3)} m³`;
+}
+
+// --- TOOLS SELECTOR ---
+function renderToolSelector(){
+  const tools = [
+    { id:'container', icon:'📦', name:'Tracking CTN', desc:'Localiza contenedores por número B/L o Booking.' },
+    { id:'vessel', icon:'🚢', name:'Vessel Status', desc:'Rastreo satelital AIS de buques mercantes.' },
+    { id:'cbm', icon:'📐', name:'Calculadora CBM', desc:'Conversor de medidas industriales a volumen cúbico.' },
+    { id:'freight', icon:'💰', name:'Coste x Pallet', desc:'Calcula el impacto logístico unitario de tu carga.' }
+  ];
+  document.getElementById('content').innerHTML = `
+  <div class="tools-grid">
+    ${tools.map(t => `
+    <div class="tool-card" onclick="openWizard('${t.id}')">
+      <div class="tc-icon">${t.icon}</div>
+      <div class="tc-name">${t.name}</div>
+      <div class="tc-desc">${t.desc}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function openWizard(id){
+  const area = document.getElementById('content');
+  if(id==='cbm') area.innerHTML = `<div class="wizard"><button class="mode-tab" onclick="renderToolSelector()" style="margin-bottom:20px;">← Volver</button>${buildCBMResult()}</div>`;
+  else if(id==='container') area.innerHTML = `<div class="wizard"><button class="mode-tab" onclick="renderToolSelector()" style="margin-bottom:20px;">← Volver</button>${buildContainerResult('MSKU1234567')}</div>`;
+  else alert('Función integrada en Búsqueda IA. Escribe lo que buscas.');
+}
+
+// INIT
+renderSmartSearch();
+</script>
+</body>
 </html>

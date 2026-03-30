@@ -1,0 +1,10 @@
+# Ignore sensitive env and deployment credentials
+.env
+.vscode/
+node_modules/
+__pycache__/
+*.pyc
+*.log
+
+# Build assets
+web_dist/**/assets/*.js

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MSBrossAI — DOHLER: Task Manager + Pomodoro con stats">
+    <title>MSBrossAI • DOHLER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030712; --card-bg: rgba(255,255,255,0.03); --card-border: rgba(255,255,255,0.06); --card-hover: rgba(255,255,255,0.08); --text: #f8fafc; --text-muted: #64748b; --accent: #3b82f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.15; pointer-events: none; z-index: 0; animation: orbFloat 20s infinite alternate ease-in-out; }
+        .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: #8b5cf6; bottom: -150px; right: -100px; animation-delay: -5s; }
+        .orb-3 { width: 400px; height: 400px; background: #06b6d4; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; }
+        @keyframes orbFloat { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(50px, 30px) scale(1.1); } 100% { transform: translate(-30px, -50px) scale(0.9); } }
+        .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 2rem; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--accent), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+        .title { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+        .badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.3rem 0.8rem; border-radius: 100px; background: var(--accent); color: white; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 100px; color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; }
+        .back-btn:hover { background: var(--card-hover); border-color: var(--accent); transform: translateX(-4px); }
+        .content { flex: 1; padding: 2rem 0; }
+        .footer { text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--card-border); color: var(--text-muted); font-size: 0.8rem; }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.6s ease forwards; }
+        .status-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(20px); margin-bottom: 1.5rem; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; display: inline-block; margin-right: 0.5rem; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease; }
+        .feature-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+        .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .feature-title { font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="container">
+        <header class="header">
+            <a href="https://msbross.me/" class="logo">MSBrossAI</a>
+            <h1 class="title">📋 DOHLER</h1>
+            <span class="badge">TASK MANAGER</span>
+        </header>
+
+        <nav style="margin-bottom: 1.5rem;">
+            <a href="https://msbross.me/" class="back-btn">← Volver al Ecosistema</a>
+        </nav>
+
+        <main class="content">
+            <div class="status-card animate-in">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <span class="status-dot"></span>
+                    <span style="font-weight: 600;">Task Manager + Pomodoro</span>
+                    <span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">v2.0</span>
+                </div>
+                <p style="color: var(--text-muted); line-height: 1.6;">
+                    Gestor de tareas con temporizador Pomodoro, estadísticas de productividad, checklists anidadas y diseño neón glassmorphism.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card animate-in" style="animation-delay: 0.1s;">
+                    <div class="feature-icon">✅</div>
+                    <div class="feature-title">CRUD de Tareas</div>
+                    <div class="feature-desc">Crear, completar, eliminar tareas con prioridades.</div>
+                </div>
+                <div class="feature-card animate-in" style="animation-delay: 0.2s;">
+                    <div class="feature-icon">⏱️</div>
+                    <div class="feature-title">Pomodoro Timer</div>
+                    <div class="feature-desc">Temporizador con asignación de tareas y stats.</div>
+                </div>
+                <div class="feature-card animate-in" style="animation-delay: 0.3s;">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Estadísticas</div>
+                    <div class="feature-desc">Eficiencia del sistema, cola y tareas críticas.</div>
+                </div>
+                <div class="feature-card animate-in" style="animation-delay: 0.4s;">
+                    <div class="feature-icon">📝</div>
+                    <div class="feature-title">Checklists Anidadas</div>
+                    <div class="feature-desc">Sub-tareas expandibles con Feather icons.</div>
+                </div>
+                <div class="feature-card animate-in" style="animation-delay: 0.5s;">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-title">Diseño Neón</div>
+                    <div class="feature-desc">Glassmorphism con efectos de luz neón.</div>
+                </div>
+                <div class="feature-card animate-in" style="animation-delay: 0.6s;">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">Polling Automático</div>
+                    <div class="feature-desc">Actualización automática cada 30 segundos.</div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>MSBrossAI © 2026 — DOHLER</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://msbross.me/">Ecosistema</a> • 
+                <a href="https://github.com/manu-alvarez/MSBrossAI">GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        (function(){const c=document.getElementById('bg-canvas'),x=c.getContext('2d');let p=[],m={x:0,y:0};function r(){c.width=window.innerWidth;c.height=window.innerHeight}r();window.addEventListener('resize',r);document.addEventListener('mousemove',e=>{m.x=e.clientX;m.y=e.clientY});class P{constructor(){this.reset()}reset(){this.x=Math.random()*c.width;this.y=Math.random()*c.height;this.vx=(Math.random()-0.5)*0.5;this.vy=(Math.random()-0.5)*0.5;this.radius=Math.random()*2+0.5;this.opacity=Math.random()*0.5+0.1}update(){this.x+=this.vx;this.y+=this.vy;const dx=m.x-this.x,dy=m.y-this.y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){this.vx-=dx*0.00005;this.vy-=dy*0.00005}if(this.x<0||this.x>c.width)this.vx*=-1;if(this.y<0||this.y>c.height)this.vy*=-1}draw(){x.beginPath();x.arc(this.x,this.y,this.radius,0,Math.PI*2);x.fillStyle=`rgba(59,130,246,${this.opacity})`;x.fill()}}const n=Math.min(80,Math.floor(window.innerWidth*window.innerHeight/15000));for(let i=0;i<n;i++)p.push(new P);function dc(){for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){x.beginPath();x.moveTo(p[i].x,p[i].y);x.lineTo(p[j].x,p[j].y);x.strokeStyle=`rgba(59,130,246,${0.1*(1-d/150)})`;x.lineWidth=0.5;x.stroke()}}}function a(){x.clearRect(0,0,c.width,c.height);p.forEach(p=>{p.update();p.draw()});dc();requestAnimationFrame(a)}a()})();
+    </script>
+</body>
+</html>

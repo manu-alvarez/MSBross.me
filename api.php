@@ -155,7 +155,7 @@ $allowedActions = [
     'chat', 'stt', 'tts', 'save_reservation', 'log_call', 'get_stats', 'traductor', 
     'get_tasks', 'add_task', 'update_task', 'delete_task', 'save_timer',
     'get_family_tasks', 'update_family_task', 'get_shopping_list', 'update_shopping_item',
-    'combipro'
+    'combipro', 'nikolina_token', 'nikolina_reservations'
 ];
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && in_array($action, ['get_tasks', 'get_stats', 'get_family_tasks', 'get_shopping_list'])) {
     // GET actions allowed
@@ -368,6 +368,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $calls = file_exists('calls_log.json') ? json_decode(file_get_contents('calls_log.json'), true) : [];
         echo json_encode(["reservations" => $res, "calls_count" => count($calls)]); exit();
     }
+
+    if ($action === 'nikolina_token') {
+        $res = postCURL("https://minda-unscolded-pyrochemically.ngrok-free.dev/api/public/token", $input, '', ["ngrok-skip-browser-warning: true"]);
+        http_response_code($res['code']);
+        echo $res['body'];
+        exit();
+    }
+
+    if ($action === 'nikolina_reservations') {
+        $res = postCURL("https://minda-unscolded-pyrochemically.ngrok-free.dev/api/public/reservations", $input, '', ["ngrok-skip-browser-warning: true"]);
+        http_response_code($res['code']);
+        echo $res['body'];
+        exit();
+    }
+
     if ($action === 'combipro') {
         global $KEYS;
         $sport = $input['sport'] ?? 'soccer_uefa_champs_league';

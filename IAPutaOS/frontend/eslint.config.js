@@ -35,4 +35,8 @@ export default [
       ],
     },
   },
+  {
+    files: ['src/components/ParticleOrb.jsx'],
+    rules: { 'react/no-unknown-property': ['error', { ignore: ['args', 'transparent', 'intensity'] }] },
+  },
 ]

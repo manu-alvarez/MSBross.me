@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 class ErrorBoundary extends React.Component {
@@ -6,7 +7,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -35,7 +36,7 @@ class ErrorBoundary extends React.Component {
             >
               Refresh Page
             </button>
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <details className="mt-6 text-left">
                 <summary className="text-gray-400 cursor-pointer hover:text-gray-300">
                   Error Details (Dev Mode)
@@ -57,3 +58,6 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+ErrorBoundary.propTypes = {
+  children: PropTypes.node,
+};

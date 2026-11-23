@@ -1,6 +1,6 @@
 import { 
   IconMonitor, IconCamera, IconGlobe, 
-  IconCalendar, IconMail, IconSend 
+  IconCalendar, IconMail 
 } from '../components/Icons.jsx';
 
 export const CORE_PLUGINS = [

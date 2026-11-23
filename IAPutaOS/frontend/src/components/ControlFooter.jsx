@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { IconTrash2, IconMic, IconMicOff } from './Icons.jsx';
 
 const ControlFooter = ({ 
@@ -47,3 +47,12 @@ const ControlFooter = ({
 };
 
 export default ControlFooter;
+
+ControlFooter.propTypes = {
+  orbState: PropTypes.string,
+  userInput: PropTypes.string,
+  setUserInput: PropTypes.func,
+  onTextInput: PropTypes.func,
+  onToggleMic: PropTypes.func,
+  onClearMemory: PropTypes.func,
+};

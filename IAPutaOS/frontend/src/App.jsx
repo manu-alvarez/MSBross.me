@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useRef, useEffect, lazy } from 'react';
+import { Suspense, useState, useRef, useEffect, lazy } from 'react';
 import './index.css';
 import LoadingSpinner from './LoadingSpinner.jsx';
 
@@ -9,11 +9,7 @@ const LazyOrb3D = lazy(() => import('./components/Orb3D.jsx'));
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 const API_KEY = import.meta.env.VITE_API_KEY || '';
 
-import { 
-  IconEye, IconCamera, IconMonitor, IconGlobe, 
-  IconCalendar, IconMail, IconSend, IconTerminal, 
-  IconMic, IconMicOff, IconTrash2, IconSmartphone 
-} from './components/Icons.jsx';
+import { IconSmartphone } from './components/Icons.jsx';
 
 
 import { CORE_PLUGINS, TOOLS } from './config/plugins.js';

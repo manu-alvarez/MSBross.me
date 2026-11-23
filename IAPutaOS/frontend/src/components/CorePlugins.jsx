@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const CorePlugins = ({ plugins }) => {
   return (
@@ -17,3 +17,7 @@ const CorePlugins = ({ plugins }) => {
 };
 
 export default CorePlugins;
+
+CorePlugins.propTypes = {
+  plugins: PropTypes.arrayOf(PropTypes.object),
+};

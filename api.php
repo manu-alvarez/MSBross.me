@@ -151,6 +151,7 @@ function extractResult($res) {
 }
 
 // ── MAIN ROUTING ──────────────────────────────────────────────────
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
 $allowedActions = [
     'chat', 'stt', 'tts', 'save_reservation', 'log_call', 'get_stats', 'traductor', 
     'get_tasks', 'add_task', 'update_task', 'delete_task', 'save_timer',

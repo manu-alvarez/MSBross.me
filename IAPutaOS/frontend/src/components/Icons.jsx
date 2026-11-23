@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 export const IconEye = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -47,3 +47,17 @@ export const IconTrash2 = ({ className, style }) => (
 export const IconSmartphone = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
 );
+
+const iconProps = { className: PropTypes.string, style: PropTypes.object };
+IconEye.propTypes = iconProps;
+IconCamera.propTypes = iconProps;
+IconMonitor.propTypes = iconProps;
+IconGlobe.propTypes = iconProps;
+IconCalendar.propTypes = iconProps;
+IconMail.propTypes = iconProps;
+IconSend.propTypes = iconProps;
+IconTerminal.propTypes = iconProps;
+IconMic.propTypes = iconProps;
+IconMicOff.propTypes = iconProps;
+IconTrash2.propTypes = iconProps;
+IconSmartphone.propTypes = iconProps;

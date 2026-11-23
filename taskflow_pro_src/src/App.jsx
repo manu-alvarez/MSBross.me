@@ -11,21 +11,20 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const tasksRes = await fetch(`${API_URL}?action=get_family_tasks`);
+        const listRes = await fetch(`${API_URL}?action=get_shopping_list`);
+        setFamilyTasks(await tasksRes.json());
+        setShoppingList(await listRes.json());
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+        setLoading(false);
+      }
+    }
     fetchData();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const tasksRes = await fetch(`${API_URL}?action=get_family_tasks`);
-      const listRes = await fetch(`${API_URL}?action=get_shopping_list`);
-      setFamilyTasks(await tasksRes.json());
-      setShoppingList(await listRes.json());
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al cargar datos:", error);
-      setLoading(false);
-    }
-  };
 
   const toggleTask = async (id, done) => {
     const updated = familyTasks.map(t => t.id === id ? { ...t, done: !done } : t);

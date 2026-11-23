@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 
 const API_URL = '/api.php';
@@ -91,7 +91,7 @@ function App() {
           </div>
           
           <div className="pipe-diagram">
-            {valvulas.map((v, i) => (
+            {valvulas.map((v) => (
               <div key={v.id} className={`device-node ${v.open ? 'active' : ''}`} onClick={() => toggleValvula(v.id)}>
                 <div className="device-icon">{v.type === 'pump' ? '⚙️' : '🔘'}</div>
                 <div className="device-label">{v.label}</div>

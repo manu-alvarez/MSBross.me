@@ -9,11 +9,12 @@ const Timer = ({ onComplete }) => {
 
   const toggle = () => setIsActive(!isActive);
 
-  const reset = useCallback(() => {
+  const reset = useCallback((nextMode) => {
+    setMode(nextMode);
     setIsActive(false);
-    setMinutes(mode === 'focus' ? 25 : 5);
+    setMinutes(nextMode === 'focus' ? 25 : 5);
     setSeconds(0);
-  }, [mode]);
+  }, []);
 
   useEffect(() => {
     let interval = null;
@@ -29,9 +30,9 @@ const Timer = ({ onComplete }) => {
           setIsActive(false);
           if (mode === 'focus') {
             onComplete();
-            setMode('break');
+            reset('break');
           } else {
-            setMode('focus');
+            reset('focus');
           }
         }
       }, 1000);
@@ -39,11 +40,8 @@ const Timer = ({ onComplete }) => {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isActive, minutes, seconds, mode, onComplete]);
+  }, [isActive, minutes, seconds, mode, onComplete, reset]);
 
-  useEffect(() => {
-    reset();
-  }, [mode, reset]);
 
   return (
     <div className="glass-card rounded-[3rem] p-10 flex flex-col items-center justify-center relative overflow-hidden group">
@@ -75,7 +73,7 @@ const Timer = ({ onComplete }) => {
           </button>
           
           <button
-            onClick={reset}
+            onClick={() => reset(mode)}
             className="w-16 h-16 rounded-2xl bg-slate-800/50 text-slate-400 border border-slate-700 flex items-center justify-center hover:bg-slate-700 transition-all"
             title="Reiniciar"
           >
@@ -85,13 +83,13 @@ const Timer = ({ onComplete }) => {
 
         <div className="mt-8 flex gap-2">
           <button 
-            onClick={() => setMode('focus')}
+            onClick={() => mode !== 'focus' && reset('focus')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${mode === 'focus' ? 'bg-cyan-500 text-slate-900 shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'bg-slate-800 text-slate-500'}`}
           >
             Enfoque
           </button>
           <button 
-            onClick={() => setMode('break')}
+            onClick={() => mode !== 'break' && reset('break')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${mode === 'break' ? 'bg-emerald-500 text-slate-900 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-800 text-slate-500'}`}
           >
             Descanso

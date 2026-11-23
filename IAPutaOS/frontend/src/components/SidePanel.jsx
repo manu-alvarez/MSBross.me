@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const SidePanel = ({ tools, onAction }) => {
   return (
@@ -22,3 +22,8 @@ const SidePanel = ({ tools, onAction }) => {
 };
 
 export default SidePanel;
+
+SidePanel.propTypes = {
+  tools: PropTypes.arrayOf(PropTypes.object),
+  onAction: PropTypes.func,
+};

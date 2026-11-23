@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import './NeuralOrb.css';
 
 const NeuralOrb = ({ audioLevel = 0, orbState = 'ready' }) => {
@@ -54,3 +54,8 @@ const NeuralOrb = ({ audioLevel = 0, orbState = 'ready' }) => {
 };
 
 export default NeuralOrb;
+
+NeuralOrb.propTypes = {
+  audioLevel: PropTypes.number,
+  orbState: PropTypes.string,
+};

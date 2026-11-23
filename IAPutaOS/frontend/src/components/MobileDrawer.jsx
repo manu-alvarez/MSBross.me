@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const MobileDrawer = ({ tools, showTools, setShowTools, onAction }) => {
   if (!showTools) return null;
@@ -36,3 +36,10 @@ const MobileDrawer = ({ tools, showTools, setShowTools, onAction }) => {
 };
 
 export default MobileDrawer;
+
+MobileDrawer.propTypes = {
+  tools: PropTypes.arrayOf(PropTypes.object),
+  showTools: PropTypes.bool,
+  setShowTools: PropTypes.func,
+  onAction: PropTypes.func,
+};

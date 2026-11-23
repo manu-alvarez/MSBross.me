@@ -55,7 +55,7 @@ def upload_file(ftp, local_path, remote_path):
         with open(local_path, "rb") as f:
             ftp.storbinary(f"STOR {remote_path}", f)
     except Exception as e:
-        print(f"  ❌ Error subiendo {remote_path}: {e}")
+        raise RuntimeError(f"Error subiendo {remote_path}") from e
 
 
 def ensure_dir(ftp, remote_dir):
@@ -68,8 +68,9 @@ def ensure_dir(ftp, remote_dir):
         try:
             ftp.mkd(path)
             print(f"Creado directorio: {path}")
-        except:
-            pass
+        except ftplib.error_perm:
+            # Muchos servidores FTP responden 550 si el directorio ya existe.
+            ftp.cwd(path)
 
 
 def build_projects():
@@ -77,33 +78,26 @@ def build_projects():
     build_commands = [
         (f"{LOCAL_ROOT}/IAPutaOS/frontend", "npm run build"),
         (f"{LOCAL_ROOT}/livekit-frontend", "npm run build"),
-        (f"{LOCAL_ROOT}/Traductor/client", "npm run build"),
         (f"{LOCAL_ROOT}/dohler_src/frontend", "npm run build"),
         (f"{LOCAL_ROOT}/taskflow_pro_src", "npm run build"),
     ]
 
-    for d, cmd in build_commands:
-        if os.path.exists(d):
-            print(f"  👉 Construyendo en {d}...")
-            try:
-                subprocess.run(
-                    cmd, cwd=d, shell=True, check=True, stdout=subprocess.DEVNULL
-                )
-            except subprocess.CalledProcessError:
-                print(f"  ❌ Error construyendo {d}")
-        else:
-            print(f"  ⚠️ Ignorando {d} (No existe)")
+    for d, _ in build_commands:
+        print(f"  Construyendo en {d}...")
+        subprocess.run(["npm", "run", "build"], cwd=d, check=True)
 
 
 def main():
-    build_projects()
-    print(f"\n🚀 Iniciando despliegue en {FTP_HOST}...")
-    try:
-        ftp = ftplib.FTP(FTP_HOST)
-        ftp.login(FTP_USER, FTP_PASS)
-    except Exception as e:
-        print(f"❌ Error de conexión FTP: {e}")
-        return
+    if os.getenv("USE_CI_ARTIFACTS") != "1":
+        build_projects()
+    for source, _ in DEPLOY_LIST:
+        if not os.path.exists(source):
+            raise FileNotFoundError(source)
+        if os.path.isdir(source) and not os.listdir(source):
+            raise ValueError(f"Directorio vacío: {source}")
+    print(f"Conectando a {FTP_HOST}...")
+    ftp = ftplib.FTP(FTP_HOST, timeout=30)
+    ftp.login(FTP_USER, FTP_PASS)
 
     for local_source, remote_dest in DEPLOY_LIST:
         print(f"\nProcesando: {os.path.basename(local_source)} -> {remote_dest}")

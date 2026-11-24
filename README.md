@@ -1,6 +1,6 @@
 # MSBross.me - Professional AI-Powered Web Ecosystem
 
-A comprehensive, production-ready web platform featuring multiple AI-integrated applications built with modern technologies. This repository showcases enterprise-level development practices, security hardening, and scalable architecture.
+A multi-application web platform featuring multiple AI-integrated applications built with modern technologies. This repository showcases enterprise-level development practices, security hardening, and scalable architecture.
 
 ## 🌟 Overview
 
@@ -62,7 +62,7 @@ Document translation service with OCR.
 - **Environment-Based Configuration**: All secrets managed via `.env` files
 - **CORS Hardening**: Strict origin validation
 - **Input Validation**: Comprehensive action and payload checking
-- **Build Security**: No secrets in compiled assets
+- **Build Security**: Compiled assets require verification before publication; do not embed private provider credentials
 - **API Rate Limiting**: Ready for implementation
 - **HTTPS Enforcement**: Security headers and HSTS
 
@@ -88,7 +88,7 @@ Document translation service with OCR.
    # Edit .env with your API keys and deployment credentials
    ```
 
-3. **Deploy to production**
+3. **Deploy only after validating the target and artifact inventory (manual operation)**
    ```bash
    python vps_mirror_deploy.py
    ```
@@ -111,8 +111,7 @@ Each sub-application can be built independently:
 # IAPutaOS
 cd IAPutaOS && docker-compose up
 
-# LogiSearch
-cd LogiSearch && npm install && npm run build
+# LogiSearch: use the separate source repository; this directory contains compiled assets
 
 # Nikolina
 cd livekit-frontend && npm install && npm run build
@@ -148,7 +147,7 @@ MSBross.me/
 ├── .gitignore                # Git ignore rules
 ├── PROJECT_SPEC.md           # Project specifications
 ├── IAPutaOS/                 # AI Restaurant System
-├── LogiSearch/               # Logistics Platform
+├── LogiSearch/               # Compiled logistics distribution
 ├── livekit-backend/          # Voice Assistant Backend
 ├── livekit-frontend/         # Voice Assistant Frontend
 ├── dohler/                   # Restaurant Management (legacy)
@@ -157,6 +156,16 @@ MSBross.me/
 ├── Traductor/                # Translation Service
 └── web_dist/                 # Production builds
 ```
+
+## Source and deployment boundaries
+
+- `LogiSearch/` contains compiled assets; source development belongs in [LogiSearch](https://github.com/manu-alvarez/LogiSearch).
+- `www/` contains deployment entry points referenced by `vps_mirror_deploy.py`.
+- `vps_backup/` includes deployment inputs, including COMBIPRO; do not remove it as generic build output.
+- `web_dist/` contains distribution snapshots whose release provenance must be verified before replacement or removal.
+- GitHub Actions builds and tests selected components; its production deployment job is limited to manual dispatch from `main`. Other deployment mechanisms require independent verification.
+- Existing mirror script uses plain FTP (`ftplib.FTP`); prefer an explicitly verified encrypted transport before using it with private credentials. No transport migration has been performed.
+- Passing CI does not establish live service availability, secret-free historical artifacts, or end-to-end functionality.
 
 ## 🎯 Key Features
 
@@ -181,7 +190,7 @@ MSBross.me/
 This repository demonstrates professional development practices:
 
 - **Clean Code**: Well-structured, documented codebase
-- **Security First**: No hardcoded secrets, secure practices
+- **Security First**: Keep private credentials outside version control; historical and compiled artifacts require separate verification
 - **Modular Architecture**: Independent, maintainable components
 - **Testing**: Comprehensive test suites
 - **Documentation**: Detailed READMEs and inline comments

@@ -31,3 +31,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Generated build logs and runtime vision captures
+**/build_log.txt
+**/temp_vision/eye_*.jpg
